@@ -202,6 +202,25 @@ def title_by_actor(matches: List[str]) -> List[str]:
         if matches[0] in get_actors(movie):
             r.append(get_title(movie))
     return r
+def director_by_year(matches: List[str]) -> List[str]:
+    """Finds all directors passed in year
+
+    Args:
+        matches - a list of 1 int, just the year
+
+    Returns:
+        a list of one or more items(strings), the directors during the year
+    """
+    pass
+    r=[]
+    for movie in movie_db:
+        
+        if int(matches[0])==get_year(movie):
+            r.append(get_director(movie))
+    return r
+
+
+
 
 # dummy argument is ignored and doesn't matter
 def bye_action(dummy: List[str]) -> None:
@@ -223,6 +242,7 @@ pa_list: List[Tuple[List[str], Callable[[List[str]], List[Any]]]] = [
     (str.split("who acted in %"), actors_by_title),
     (str.split("when was % made"), year_by_title),
     (str.split("in what movies did % appear"), title_by_actor),
+    (str.split("what directors were there in _"), director_by_year),
     (["bye"], bye_action),
 ]
 
@@ -243,7 +263,6 @@ def search_pa_list(src: List[str]) -> List[str]:
     
     for pat, act in pa_list:
         val=match(pat,src)
-        
         if val!=None:
             
             if act(val)!=[]:
@@ -331,6 +350,11 @@ if __name__ == "__main__":
     assert sorted(title_by_actor(["orson welles"])) == sorted(
         ["citizen kane", "othello"]
     ), "failed title_by_actor test"
+    assert isinstance(director_by_year(["1952"]), list), "director_by_year not returning a list"
+    assert sorted(director_by_year(["1952"])) == sorted(
+        ["vincente minnelli", "orson welles"]
+    ), "failed director_by_year test"
+    
     
     
     assert sorted(search_pa_list(["hi", "there"])) == sorted(
@@ -342,5 +366,7 @@ if __name__ == "__main__":
     assert sorted(
         search_pa_list(["what", "movies", "were", "made", "in", "2020"])
     ) == sorted(["No answers"]), "failed search_pa_list test 3"
-
+    assert sorted(search_pa_list(["what", "directors","were","there","in", "1988"])) == sorted(
+        ["michael chrichton"]
+    ), "failed search_pa_list test 4"
     print("All tests passed!")
